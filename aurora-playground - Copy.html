@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Derkey Profile</title>
+  <style>
+    :root {
+      --sky-top: #2f8ab3;
+      --sky-mid: #89cbe0;
+      --sky-low: #f7c8b9;
+      --blue: #1b6e9b;
+      --blue-soft: rgba(27, 110, 155, 0.26);
+      --white: rgba(255, 252, 244, 0.9);
+      --shadow: rgba(15, 72, 112, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      background: var(--sky-top);
+      color: var(--blue);
+      font-family: "Segoe UI", "Tahoma", sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      min-height: 100dvh;
+    }
+
+    .page {
+      position: relative;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: max(28px, env(safe-area-inset-top)) 22px max(34px, env(safe-area-inset-bottom));
+      isolation: isolate;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.04)),
+        url("background.jpg") center / cover no-repeat;
+    }
+
+    .cover,
+    .sky-day {
+      grid-area: 1 / 1;
+      width: 100%;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      transition: opacity 520ms ease, transform 720ms cubic-bezier(0.48, 0.02, 0.16, 1), filter 520ms ease;
+    }
+
+    .sky-day {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px) scale(1.04);
+      filter: blur(8px);
+    }
+
+    body.show-day .cover {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.18);
+      filter: blur(8px);
+    }
+
+    body.show-day .sky-day {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .profile {
+      width: min(100%, 430px);
+      min-height: min(760px, calc(100dvh - 58px));
+      display: grid;
+      grid-template-rows: 1fr auto auto auto 1fr;
+      align-items: center;
+      justify-items: center;
+      gap: 20px;
+      transform: translateY(8px);
+    }
+
+    .photo-wrap {
+      position: relative;
+      grid-row: 2;
+      width: min(74vw, 318px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+
+    .photo-ring {
+      position: absolute;
+      inset: 0;
+      border: 2.5px solid var(--blue);
+      border-radius: 50%;
+      transform: rotate(-2deg);
+      box-shadow: 0 18px 42px var(--shadow);
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(7px);
+    }
+
+    .photo-ring::before,
+    .photo-ring::after {
+      content: "";
+      position: absolute;
+      border: 1.8px solid var(--blue-soft);
+      border-radius: 50%;
+      inset: 11px;
+      transform: rotate(7deg);
+    }
+
+    .photo-ring::after {
+      inset: -12px;
+      opacity: 0.42;
+      border-style: dashed;
+      animation: breathe 5.4s ease-in-out infinite;
+    }
+
+    .photo {
+      position: relative;
+      width: calc(100% - 40px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.96) 0 18%, transparent 19%),
+        radial-gradient(circle at 52% 61%, rgba(88, 164, 202, 0.18) 0 28%, transparent 29%),
+        linear-gradient(160deg, rgba(255, 255, 255, 0.82), rgba(197, 232, 242, 0.68));
+      box-shadow: inset 0 0 48px rgba(255, 255, 255, 0.48);
+      touch-action: none;
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: var(--crop-x, 40%) var(--crop-y, 0%);
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .photo-label {
+      display: none;
+      position: relative;
+      top: -2px;
+      font-family: "Comic Sans MS", "Segoe Print", cursive;
+      font-size: clamp(2.2rem, 11vw, 4.2rem);
+      letter-spacing: 0;
+      line-height: 1;
+      transform: rotate(-2deg);
+    }
+
+    .name {
+      grid-row: 3;
+      margin: 0;
+      color: #8fe9ff;
+      font-family: "Comic Sans MS", "Segoe Print", cursive;
+      font-size: clamp(2.35rem, 11vw, 4.7rem);
+      font-weight: 500;
+      letter-spacing: 0;
+      line-height: 0.9;
+      text-transform: none;
+      -webkit-text-stroke: 2.6px #0a5d9a;
+      paint-order: stroke fill;
+      text-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.42),
+        0 0 18px rgba(143, 233, 255, 0.62),
+        0 18px 32px rgba(19, 74, 112, 0.24);
+      transform: rotate(-1.4deg);
+    }
+
+    .play-button {
+      grid-row: 4;
+      width: clamp(72px, 21vw, 96px);
+      aspect-ratio: 1.18;
+      display: grid;
+      place-items: center;
+      border: 2.4px solid var(--blue);
+      border-radius: 46% 54% 52% 48% / 54% 45% 55% 46%;
+      background: rgba(255, 255, 255, 0.34);
+      color: var(--blue);
+      cursor: pointer;
+      box-shadow: 0 14px 28px var(--shadow);
+      transform: rotate(-3deg);
+      transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .play-button svg {
+      width: 42%;
+      height: 42%;
+      margin-left: 5px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 8;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+
+    .play-button:active {
+      transform: rotate(-3deg) scale(0.94);
+      box-shadow: 0 8px 18px var(--shadow);
+      background: rgba(213, 241, 252, 0.72);
+    }
+
+    .play-button:focus-visible {
+      outline: 3px solid rgba(27, 110, 155, 0.25);
+      outline-offset: 5px;
+    }
+
+    .cloud-scene {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      display: none;
+    }
+
+    .day-card {
+      position: relative;
+      width: min(100%, 430px);
+      min-height: min(810px, calc(100dvh - 42px));
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 12px;
+      padding: max(18px, env(safe-area-inset-top)) 12px max(18px, env(safe-area-inset-bottom));
+    }
+
+    .day-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 46px;
+    }
+
+    .left-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .round-button {
+      position: relative;
+      width: 46px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(21, 103, 156, 0.78);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.36);
+      color: #0c649c;
+      box-shadow: 0 14px 28px rgba(24, 88, 132, 0.16);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .round-button svg {
+      width: 52%;
+      height: 52%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .round-button::after,
+    .day-nav::after {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border: 2px solid rgba(143, 233, 255, 0.52);
+      border-radius: inherit;
+      opacity: 0;
+      transform: scale(0.78);
+      pointer-events: none;
+    }
+
+    .round-button:active,
+    .day-nav:active {
+      transform: scale(1.12);
+      background: rgba(226, 249, 255, 0.5);
+      box-shadow: 0 18px 34px rgba(24, 88, 132, 0.22);
+    }
+
+    .round-button:active::after,
+    .day-nav:active::after {
+      animation: pulse-ring 420ms ease-out;
+    }
+
+    .date-badge {
+      display: grid;
+      justify-items: end;
+      gap: 2px;
+      color: #eafaff;
+      text-align: right;
+      text-shadow: 0 2px 14px rgba(13, 76, 122, 0.5);
+    }
+
+    .date-badge strong {
+      font-family: "Comic Sans MS", "Segoe Print", cursive;
+      font-size: clamp(1.9rem, 8vw, 3rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+      -webkit-text-stroke: 1.4px #0a5d9a;
+      paint-order: stroke fill;
+    }
+
+    .date-badge span {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: rgba(236, 251, 255, 0.88);
+    }
+
+    .sky-frame {
+      align-self: center;
+      justify-self: center;
+      position: relative;
+      overflow: hidden;
+      width: min(92vw, 340px);
+      margin: 0;
+      min-height: 0;
+      border: 3px solid rgba(235, 250, 255, 0.86);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 24px 48px rgba(19, 73, 115, 0.18),
+        inset 0 0 0 1px rgba(22, 98, 152, 0.1);
+    }
+
+    .sky-frame::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      z-index: 1;
+      pointer-events: none;
+      border: 1.5px solid rgba(255, 255, 255, 0.42);
+      border-radius: 20px;
+    }
+
+    .sky-photo-track {
+      position: relative;
+      width: 100%;
+      height: min(72dvh, 670px);
+      min-height: 520px;
+    }
+
+    .sky-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 520ms cubic-bezier(0.38, 0, 0.16, 1), opacity 520ms ease;
+      will-change: transform;
+    }
+
+    .day-image-next {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    .caption {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 20px;
+      z-index: 2;
+      display: grid;
+      gap: 4px;
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.14);
+      color: #f2fcff;
+      box-shadow: 0 12px 24px rgba(24, 74, 113, 0.12);
+      backdrop-filter: blur(12px);
+      text-shadow: 0 2px 12px rgba(10, 73, 117, 0.36);
+    }
+
+    .caption strong {
+      font-family: "Comic Sans MS", "Segoe Print", cursive;
+      font-size: 1.18rem;
+      line-height: 1;
+      letter-spacing: 0;
+      -webkit-text-stroke: 0.8px #0a5d9a;
+      paint-order: stroke fill;
+    }
+
+    .caption span {
+      font-size: 0.9rem;
+      color: rgba(242, 252, 255, 0.92);
+    }
+
+    .day-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .pill {
+      min-width: 132px;
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 2px solid rgba(21, 103, 156, 0.7);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.34);
+      color: #0c649c;
+      font-weight: 700;
+      box-shadow: 0 14px 28px rgba(24, 88, 132, 0.15);
+      backdrop-filter: blur(10px);
+    }
+
+    .day-nav {
+      position: relative;
+      width: 46px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(21, 103, 156, 0.7);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.28);
+      color: #0c649c;
+      box-shadow: 0 14px 28px rgba(24, 88, 132, 0.13);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .day-nav svg {
+      width: 52%;
+      height: 52%;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .prev-day:active svg {
+      animation: nudge-left 260ms ease-out;
+    }
+
+    .next-day:active svg {
+      animation: nudge-right 260ms ease-out;
+    }
+
+    .back-button:active svg {
+      animation: nudge-left 260ms ease-out;
+    }
+
+    .music-panel {
+      position: fixed;
+      top: calc(max(18px, env(safe-area-inset-top)) + 62px);
+      left: max(16px, calc((100vw - 430px) / 2 + 16px));
+      right: max(16px, calc((100vw - 430px) / 2 + 16px));
+      z-index: 30;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: max-height 420ms ease, opacity 300ms ease, transform 420ms ease;
+    }
+
+    body.music-open .music-panel {
+      max-height: 132px;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .music-frame {
+      width: 100%;
+      display: grid;
+      gap: 10px;
+      overflow: hidden;
+      border: 2px solid rgba(235, 250, 255, 0.7);
+      border-radius: 18px;
+      background: rgba(123, 181, 218, 0.52);
+      box-shadow: 0 18px 34px rgba(24, 88, 132, 0.26);
+      backdrop-filter: blur(10px);
+      padding: 12px;
+    }
+
+    .song-title {
+      min-width: 0;
+      color: #effcff;
+      font-weight: 800;
+      text-shadow: 0 2px 12px rgba(10, 73, 117, 0.38);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-controls {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .music-stop {
+      min-width: 66px;
+      min-height: 36px;
+      border: 2px solid rgba(21, 103, 156, 0.74);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.3);
+      color: #0c649c;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .volume-slider {
+      width: 100%;
+      accent-color: #8fe9ff;
+    }
+
+    .volume-value {
+      min-width: 38px;
+      color: #effcff;
+      font-size: 0.86rem;
+      font-weight: 800;
+      text-align: right;
+      text-shadow: 0 2px 12px rgba(10, 73, 117, 0.34);
+    }
+
+    .cloud,
+    .cloud::before,
+    .cloud::after {
+      position: absolute;
+      display: block;
+      content: "";
+      border-radius: 999px;
+      filter: blur(0.2px);
+    }
+
+    .cloud {
+      background:
+        radial-gradient(circle at 18% 54%, #fff8e9 0 22%, transparent 23%),
+        radial-gradient(circle at 36% 36%, #fff4df 0 30%, transparent 31%),
+        radial-gradient(circle at 56% 47%, #ffd9ce 0 29%, transparent 30%),
+        radial-gradient(circle at 76% 36%, #fff6e4 0 30%, transparent 31%),
+        radial-gradient(circle at 88% 59%, #ffb8c3 0 24%, transparent 25%),
+        linear-gradient(180deg, #fff0d9, #f99eb3 58%, #6686bd 100%);
+      box-shadow: 0 24px 64px rgba(29, 79, 130, 0.16);
+      opacity: 0.95;
+    }
+
+    .cloud::before {
+      inset: 18% -8% -18% 4%;
+      background:
+        radial-gradient(circle at 20% 42%, rgba(255, 255, 245, 0.92) 0 16%, transparent 17%),
+        radial-gradient(circle at 42% 30%, rgba(255, 221, 213, 0.94) 0 22%, transparent 23%),
+        radial-gradient(circle at 67% 42%, rgba(255, 245, 224, 0.9) 0 18%, transparent 19%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 161, 184, 0.42));
+    }
+
+    .cloud::after {
+      inset: 52% -6% -30% -6%;
+      background:
+        radial-gradient(circle at 16% 30%, rgba(67, 100, 162, 0.32) 0 17%, transparent 18%),
+        radial-gradient(circle at 47% 25%, rgba(79, 105, 174, 0.28) 0 25%, transparent 26%),
+        radial-gradient(circle at 78% 26%, rgba(82, 111, 181, 0.26) 0 19%, transparent 20%);
+    }
+
+    .cloud.main {
+      right: -28vw;
+      top: 24%;
+      width: 112vw;
+      height: 34vh;
+      min-height: 260px;
+      transform: rotate(-5deg);
+    }
+
+    .cloud.lower {
+      left: -24vw;
+      bottom: -5%;
+      width: 118vw;
+      height: 24vh;
+      min-height: 190px;
+      opacity: 0.58;
+      transform: rotate(2deg);
+    }
+
+    .cloud.small {
+      left: -14vw;
+      top: 49%;
+      width: 54vw;
+      height: 16vh;
+      min-height: 110px;
+      opacity: 0.58;
+      transform: rotate(-4deg);
+    }
+
+    .streak {
+      position: absolute;
+      height: 1.5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.55);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.32);
+      transform: rotate(17deg);
+    }
+
+    .streak.one {
+      left: -6%;
+      top: 11%;
+      width: 62%;
+    }
+
+    .streak.two {
+      left: 7%;
+      top: 31%;
+      width: 42%;
+      opacity: 0.62;
+    }
+
+    .streak.three {
+      right: -8%;
+      top: 21%;
+      width: 38%;
+      opacity: 0.42;
+    }
+
+    .is-diving .photo-wrap,
+    .is-diving .name,
+    .is-diving .play-button {
+      animation: sink 780ms cubic-bezier(0.48, 0.02, 0.16, 1) forwards;
+    }
+
+    .is-diving .page {
+      animation: paperSink 780ms cubic-bezier(0.48, 0.02, 0.16, 1) forwards;
+    }
+
+    @keyframes breathe {
+      50% {
+        transform: scale(1.035) rotate(9deg);
+        opacity: 0.2;
+      }
+    }
+
+    @keyframes floaty {
+      50% {
+        transform: translateY(-18px) rotate(18deg);
+        opacity: 0.48;
+      }
+    }
+
+    @keyframes sink {
+      to {
+        transform: translateY(16vh) scale(1.38);
+        opacity: 0;
+        filter: blur(6px);
+      }
+    }
+
+    @keyframes paperSink {
+      to {
+        filter: saturate(1.15) brightness(0.92);
+      }
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        opacity: 0.75;
+        transform: scale(0.78);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.35);
+      }
+    }
+
+    @keyframes nudge-left {
+      50% {
+        transform: translateX(-5px) scale(1.08);
+      }
+    }
+
+    @keyframes nudge-right {
+      50% {
+        transform: translateX(5px) scale(1.08);
+      }
+    }
+
+    @media (min-width: 720px) {
+      .profile {
+        min-height: min(820px, calc(100dvh - 70px));
+      }
+
+      .photo-wrap {
+        width: min(46vw, 370px);
+      }
+    }
+
+    @media (max-height: 680px) {
+      .profile {
+        gap: 14px;
+        transform: translateY(0);
+      }
+
+      .photo-wrap {
+        width: min(64vw, 252px);
+      }
+
+      .play-button {
+        width: 70px;
+      }
+
+      .sky-photo-track {
+        height: 66dvh;
+        min-height: 410px;
+      }
+
+      body.music-open .music-panel {
+        max-height: 118px;
+      }
+
+      .music-frame {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" aria-label="Derkey profile cover">
+    <div class="cloud-scene" aria-hidden="true">
+      <span class="streak one"></span>
+      <span class="streak two"></span>
+      <span class="streak three"></span>
+      <span class="cloud main"></span>
+      <span class="cloud small"></span>
+      <span class="cloud lower"></span>
+    </div>
+
+    <section class="cover">
+      <div class="profile">
+      <div class="photo-wrap" aria-label="Profile photo area">
+        <div class="photo-ring"></div>
+        <div class="photo">
+          <img src="profile.jpg" alt="Derkey profile photo">
+          <span class="photo-label">Profile</span>
+        </div>
+      </div>
+
+      <h1 class="name">Derkey</h1>
+
+      <button class="play-button" type="button" aria-label="Play">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M32 20 L78 50 L32 80 Z" />
+        </svg>
+      </button>
+      </div>
+    </section>
+
+    <section class="sky-day" aria-label="Day 1 sky photo">
+      <article class="day-card">
+        <header class="day-top">
+          <div class="left-actions">
+            <button class="round-button back-button" type="button" aria-label="Back to profile">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M60 25 L35 50 L60 75" />
+              </svg>
+            </button>
+
+            <button class="round-button music-toggle" type="button" aria-label="Toggle music">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <path d="M38 25 V68 C38 79 22 80 22 69 C22 59 37 58 38 68" />
+                <path d="M38 25 L74 17 V58 C74 70 58 71 58 60 C58 50 73 49 74 58" />
+                <path d="M38 37 L74 29" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="date-badge">
+            <strong>May 2026</strong>
+          </div>
+        </header>
+
+        <div class="music-panel" aria-label="Music player">
+          <div class="music-frame">
+            <div class="song-title">Song 1</div>
+            <div class="music-controls">
+              <button class="music-stop" type="button">Pause</button>
+              <input class="volume-slider" type="range" min="0" max="100" value="50" aria-label="Volume">
+              <span class="volume-value">50%</span>
+            </div>
+            <audio class="music-audio" preload="auto"></audio>
+          </div>
+        </div>
+
+        <figure class="sky-frame">
+          <div class="sky-photo-track">
+            <img class="day-image day-image-current" src="day1.jpg" alt="Day 1 sky photo">
+            <img class="day-image day-image-next" src="day1.jpg" alt="">
+          </div>
+          <figcaption class="caption">
+            <strong class="day-count">Day 1 / 25</strong>
+          </figcaption>
+        </figure>
+
+        <div class="day-controls" aria-label="Photo navigation">
+          <button class="day-nav prev-day" type="button" aria-label="Previous day">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M60 25 L35 50 L60 75" />
+            </svg>
+          </button>
+          <div class="pill current-day">Day 1</div>
+          <button class="day-nav next-day" type="button" aria-label="Next day">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <path d="M40 25 L65 50 L40 75" />
+            </svg>
+          </button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const playButton = document.querySelector(".play-button");
+    const backButton = document.querySelector(".back-button");
+    const musicToggle = document.querySelector(".music-toggle");
+    const musicAudio = document.querySelector(".music-audio");
+    const musicStop = document.querySelector(".music-stop");
+    const volumeSlider = document.querySelector(".volume-slider");
+    const volumeValue = document.querySelector(".volume-value");
+    const songTitle = document.querySelector(".song-title");
+    let activeImage = document.querySelector(".day-image-current");
+    let standbyImage = document.querySelector(".day-image-next");
+    const dayCount = document.querySelector(".day-count");
+    const currentDay = document.querySelector(".current-day");
+    const prevDay = document.querySelector(".prev-day");
+    const nextDay = document.querySelector(".next-day");
+    const photo = document.querySelector(".photo");
+    const photoImage = document.querySelector(".photo img");
+    const cropKey = "derkey-profile-crop";
+    const crop = JSON.parse(localStorage.getItem(cropKey) || "{\"x\":50,\"y\":50}");
+    const musicTracks = [
+      { title: "Song 1", src: "t047 - __‚_____ƒ_____Ÿ________›__™__ƒ__ˆ.mp3" },
+      { title: "Song 2", src: "t047 - ____________________‡.mp3" },
+      { title: "Song 3", src: "t047 - _____‚_____‡__Ÿ___.mp3" }
+    ];
+    const skyDays = [
+      { day: 1, src: "day1.jpg" },
+      { day: 2, src: "day2.jpg" },
+      { day: 3, src: "day3.jpg" },
+      { day: 4, src: "day4.jpg" },
+      { day: 5, src: "day5.jpg" },
+      { day: 6, src: "day6.jpg" },
+      { day: 7, src: "day7.jpg" },
+      { day: 8, src: "day8.jpg" },
+      { day: 9, src: "day9.jpg" },
+      { day: 10, src: "day10.jpg" },
+      { day: 11, src: "day11.jpg" },
+      { day: 13, src: "day13.jpg" },
+      { day: 14, src: "day14.jpg" },
+      { day: 15, src: "day15.jpg" },
+      { day: 16, src: "day16.jpg" },
+      { day: 17, src: "day17.jpg" },
+      { day: 19, src: "day19.jpg" },
+      { day: 20, src: "day20.jpg" },
+      { day: 21, src: "day21.jpg" },
+      { day: 22, src: "day22.jpg" },
+      { day: 23, src: "day23.jpg" },
+      { day: 24, src: "day24.jpg" },
+      { day: 25, src: "day25.jpg" },
+      { day: 26, src: "day26.jpg" },
+      { day: 27, src: "day27.jpg" }
+    ];
+    let activeDayIndex = 0;
+    let activeTrackIndex = 0;
+    let targetVolume = 0.5;
+    let fadeTimer = null;
+    let isSliding = false;
+    let dragStart = null;
+
+    function applyCrop() {
+      photoImage.style.setProperty("--crop-x", `${crop.x}%`);
+      photoImage.style.setProperty("--crop-y", `${crop.y}%`);
+      localStorage.setItem(cropKey, JSON.stringify(crop));
+    }
+
+    function clamp(value) {
+      return Math.max(0, Math.min(100, value));
+    }
+
+    function setDayText() {
+      const displayDay = activeDayIndex + 1;
+      dayCount.textContent = `Day ${displayDay} / ${skyDays.length}`;
+      currentDay.textContent = `Day ${displayDay}`;
+    }
+
+    function showDay(index, direction = 0) {
+      if (isSliding) return;
+      const nextIndex = (index + skyDays.length) % skyDays.length;
+      if (nextIndex === activeDayIndex && direction !== 0) return;
+      activeDayIndex = (index + skyDays.length) % skyDays.length;
+      const item = skyDays[activeDayIndex];
+      const displayDay = activeDayIndex + 1;
+
+      if (direction === 0) {
+        activeImage.src = item.src;
+        activeImage.alt = `Day ${displayDay} sky photo`;
+        setDayText();
+        return;
+      }
+
+      isSliding = true;
+      standbyImage.src = item.src;
+      standbyImage.alt = `Day ${displayDay} sky photo`;
+      standbyImage.style.transition = "none";
+      activeImage.style.transition = "none";
+      standbyImage.style.opacity = "1";
+      standbyImage.style.transform = `translateX(${direction * 100}%)`;
+      activeImage.style.transform = "translateX(0)";
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          standbyImage.style.transition = "";
+          activeImage.style.transition = "";
+          standbyImage.style.transform = "translateX(0)";
+          activeImage.style.transform = `translateX(${-direction * 100}%)`;
+        });
+      });
+
+      window.setTimeout(() => {
+        const oldActive = activeImage;
+        const newActive = standbyImage;
+        newActive.style.transition = "none";
+        oldActive.style.transition = "none";
+        newActive.style.opacity = "1";
+        newActive.style.transform = "translateX(0)";
+        oldActive.style.opacity = "0";
+        oldActive.style.transform = `translateX(${-direction * 100}%)`;
+        activeImage = newActive;
+        standbyImage = oldActive;
+        activeImage.classList.add("day-image-current");
+        activeImage.classList.remove("day-image-next");
+        standbyImage.classList.add("day-image-next");
+        standbyImage.classList.remove("day-image-current");
+        setDayText();
+        isSliding = false;
+        requestAnimationFrame(() => {
+          activeImage.style.transition = "";
+          standbyImage.style.transition = "";
+        });
+      }, 540);
+    }
+
+    function setTrack(index) {
+      activeTrackIndex = (index + musicTracks.length) % musicTracks.length;
+      const track = musicTracks[activeTrackIndex];
+      musicAudio.src = track.src;
+      songTitle.textContent = track.title;
+    }
+
+    function setVolume(value) {
+      targetVolume = clamp(value) / 100;
+      musicAudio.volume = targetVolume;
+      volumeSlider.value = Math.round(targetVolume * 100);
+      volumeValue.textContent = `${Math.round(targetVolume * 100)}%`;
+    }
+
+    function fadeInMusic() {
+      window.clearInterval(fadeTimer);
+      musicAudio.volume = 0;
+      const step = Math.max(targetVolume / 28, 0.01);
+      fadeTimer = window.setInterval(() => {
+        musicAudio.volume = Math.min(targetVolume, musicAudio.volume + step);
+        if (musicAudio.volume >= targetVolume) {
+          window.clearInterval(fadeTimer);
+        }
+      }, 90);
+    }
+
+    async function playMusic({ fade = false } = {}) {
+      if (!musicAudio.src) setTrack(activeTrackIndex);
+      musicStop.textContent = "Pause";
+      try {
+        if (fade) musicAudio.volume = 0;
+        await musicAudio.play();
+        if (fade) fadeInMusic();
+      } catch (error) {
+        musicStop.textContent = "Play";
+      }
+    }
+
+    function pauseMusic() {
+      window.clearInterval(fadeTimer);
+      musicAudio.pause();
+      musicStop.textContent = "Play";
+    }
+
+    applyCrop();
+    showDay(0);
+    setTrack(0);
+    setVolume(10);
+
+    playButton.addEventListener("click", () => {
+      document.body.classList.add("is-diving");
+      playMusic({ fade: true });
+      window.setTimeout(() => {
+        document.body.classList.remove("is-diving");
+        document.body.classList.add("show-day");
+      }, 900);
+    });
+
+    backButton.addEventListener("click", () => {
+      document.body.classList.remove("show-day");
+    });
+
+    musicToggle.addEventListener("click", () => {
+      document.body.classList.toggle("music-open");
+    });
+
+    musicStop.addEventListener("click", () => {
+      if (musicAudio.paused) {
+        playMusic();
+      } else {
+        pauseMusic();
+      }
+    });
+
+    volumeSlider.addEventListener("input", () => {
+      setVolume(Number(volumeSlider.value));
+    });
+
+    musicAudio.addEventListener("ended", () => {
+      setTrack(activeTrackIndex + 1);
+      playMusic();
+    });
+
+    prevDay.addEventListener("click", () => {
+      showDay(activeDayIndex - 1, -1);
+    });
+
+    nextDay.addEventListener("click", () => {
+      showDay(activeDayIndex + 1, 1);
+    });
+
+    photo.addEventListener("pointerdown", (event) => {
+      dragStart = {
+        x: event.clientX,
+        y: event.clientY,
+        cropX: crop.x,
+        cropY: crop.y
+      };
+      photo.setPointerCapture(event.pointerId);
+    });
+
+    photo.addEventListener("pointermove", (event) => {
+      if (!dragStart) return;
+      const size = Math.max(photo.clientWidth, 1);
+      crop.x = clamp(dragStart.cropX - ((event.clientX - dragStart.x) / size) * 72);
+      crop.y = clamp(dragStart.cropY - ((event.clientY - dragStart.y) / size) * 72);
+      applyCrop();
+    });
+
+    photo.addEventListener("pointerup", () => {
+      dragStart = null;
+    });
+
+    photo.addEventListener("pointercancel", () => {
+      dragStart = null;
+    });
+
+    photo.addEventListener("dblclick", () => {
+      crop.x = 50;
+      crop.y = 50;
+      applyCrop();
+    });
+  </script>
+</body>
+</html>
