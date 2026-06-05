@@ -437,7 +437,7 @@
       object-fit: cover;
       object-position: center;
       transition: transform 520ms var(--ease-slide), opacity 520ms ease;
-      will-change: transform;
+      will-change: transform, opacity;
     }
 
     .day-image-next {
@@ -1312,17 +1312,26 @@
       });
     }
 
-    function setDay(index, direction = 0) {
+    function preloadImage(src) {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = src;
+      });
+    }
+
+    async function setDay(index, direction = 0) {
       if (state.isSliding) return;
 
       const nextIndex = (index + app.days.length) % app.days.length;
       if (nextIndex === state.dayIndex && direction !== 0) return;
 
-      state.dayIndex = nextIndex;
-      const src = app.days[state.dayIndex];
-      const displayDay = state.dayIndex + 1;
+      const src = app.days[nextIndex];
+      const displayDay = nextIndex + 1;
 
       if (direction === 0) {
+        state.dayIndex = nextIndex;
         el.activeImage.src = src;
         el.activeImage.alt = `Day ${displayDay} sky photo`;
         setBackdrop(src, true);
@@ -1331,6 +1340,8 @@
       }
 
       state.isSliding = true;
+      await preloadImage(src);
+      state.dayIndex = nextIndex;
       setBackdrop(src);
       prepareStandbyImage(src, displayDay, direction);
       animateImageSwap(direction);
@@ -1343,22 +1354,20 @@
       el.activeImage.style.transition = "none";
       el.standbyImage.style.opacity = "1";
       el.standbyImage.style.transform = `translateX(${direction * 100}%)`;
+      el.activeImage.style.opacity = "1";
       el.activeImage.style.transform = "translateX(0)";
     }
 
     function animateImageSwap(direction) {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.standbyImage.style.transition = "";
-          el.activeImage.style.transition = "";
-          el.standbyImage.style.transform = "translateX(0)";
-          el.activeImage.style.transform = `translateX(${-direction * 100}%)`;
-        });
-      });
+      const oldActive = el.activeImage;
+      const newActive = el.standbyImage;
+      let isSettled = false;
 
-      window.setTimeout(() => {
-        const oldActive = el.activeImage;
-        const newActive = el.standbyImage;
+      const settleSwap = () => {
+        if (isSettled) return;
+        isSettled = true;
+        window.clearTimeout(fallbackTimer);
+        newActive.removeEventListener("transitionend", handleTransitionEnd);
 
         newActive.style.transition = "none";
         oldActive.style.transition = "none";
@@ -1377,11 +1386,27 @@
         updateDayText();
         state.isSliding = false;
 
+        oldActive.offsetWidth;
         requestAnimationFrame(() => {
           el.activeImage.style.transition = "";
-          el.standbyImage.style.transition = "";
         });
-      }, 540);
+      };
+
+      const handleTransitionEnd = (event) => {
+        if (event.target === newActive && event.propertyName === "transform") settleSwap();
+      };
+
+      newActive.addEventListener("transitionend", handleTransitionEnd);
+      const fallbackTimer = window.setTimeout(settleSwap, 760);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          newActive.style.transition = "";
+          oldActive.style.transition = "";
+          newActive.style.transform = "translateX(0)";
+          oldActive.style.transform = `translateX(${-direction * 100}%)`;
+        });
+      });
     }
 
     /* Slideshow */
