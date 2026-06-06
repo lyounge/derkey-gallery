@@ -387,17 +387,63 @@
     .date-badge {
       color: #eafaff;
       text-align: right;
-      padding-right: 8px;
       text-shadow: 0 2px 14px rgba(13, 76, 122, 0.5);
     }
 
-    .date-badge strong {
+    .month-switcher {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .month-label {
+      min-width: 150px;
+      text-align: center;
       font-family: var(--hand-font);
       font-size: clamp(1.55rem, 6.8vw, 2.5rem);
       line-height: 0.92;
       letter-spacing: 0;
       -webkit-text-stroke: 1.4px var(--blue-dark);
       paint-order: stroke fill;
+    }
+
+    .month-nav {
+      width: 32px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      color: #eafaff;
+      background: transparent;
+      cursor: pointer;
+      filter: drop-shadow(0 2px 6px rgba(13, 76, 122, 0.5));
+    }
+
+    .month-nav svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .month-nav:disabled {
+      opacity: 0.28;
+      cursor: default;
+    }
+
+    .month-nav:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+
+    .month-nav:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 2px;
+      border-radius: 8px;
     }
 
     .sky-frame {
@@ -425,6 +471,35 @@
       pointer-events: none;
       border: 1.5px solid rgba(255, 255, 255, 0.42);
       border-radius: 20px;
+    }
+
+    .empty-month {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      color: #effbff;
+      text-align: center;
+      font-family: var(--hand-font);
+      font-size: 1.5rem;
+      line-height: 1.25;
+      text-shadow: 0 2px 12px rgba(13, 76, 122, 0.55);
+      background: rgba(78, 149, 202, 0.26);
+    }
+
+    .sky-frame.is-empty {
+      cursor: default;
+    }
+
+    .sky-frame.is-empty .empty-month {
+      display: grid;
+    }
+
+    .sky-frame.is-empty .sky-photo-track,
+    .sky-frame.is-empty .potm-badge {
+      visibility: hidden;
     }
 
     .sky-photo-track {
@@ -502,6 +577,12 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
+    }
+
+    .day-controls button:disabled {
+      opacity: 0.34;
+      cursor: default;
+      pointer-events: none;
     }
 
     .slideshow-toggle {
@@ -1076,10 +1157,10 @@
 
     <p class="cover-tagline">small pieces of my days</p>
 
-    <section class="sky-day" aria-label="May 2026 sky gallery">
+    <section class="sky-day" aria-label="Sky photo gallery">
       <div class="day-backdrop" aria-hidden="true">
-        <img class="backdrop-image active" src="day1.jpg" alt="">
-        <img class="backdrop-image" src="day1.jpg" alt="">
+        <img class="backdrop-image active" src="photos/2026-05/day1.jpg" alt="">
+        <img class="backdrop-image" src="photos/2026-05/day1.jpg" alt="">
       </div>
 
       <article class="day-card">
@@ -1101,7 +1182,19 @@
           </div>
 
           <div class="date-badge">
-            <strong>May 2026</strong>
+            <div class="month-switcher" aria-label="Choose gallery month">
+              <button class="month-nav prev-month" type="button" aria-label="Previous month">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <path d="M60 25 L35 50 L60 75" />
+                </svg>
+              </button>
+              <strong class="month-label">May 2026</strong>
+              <button class="month-nav next-month" type="button" aria-label="Next month">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                  <path d="M40 25 L65 50 L40 75" />
+                </svg>
+              </button>
+            </div>
           </div>
         </header>
 
@@ -1158,10 +1251,11 @@
 
         <figure class="sky-frame" tabindex="0" aria-label="Open current photo">
           <div class="sky-photo-track">
-            <img class="day-image day-image-current" src="day1.jpg" alt="Day 1 sky photo">
-            <img class="day-image day-image-next" src="day1.jpg" alt="">
+            <img class="day-image day-image-current" src="photos/2026-05/day1.jpg" alt="May 2026, day 1 sky photo">
+            <img class="day-image day-image-next" src="photos/2026-05/day1.jpg" alt="">
             <img class="potm-badge" src="potm-crown-small.png" alt="Photo of the Month">
           </div>
+          <div class="empty-month">No photos this month yet</div>
           <figcaption class="caption">
             <strong class="day-count">Day 1 / 25</strong>
           </figcaption>
@@ -1221,45 +1315,16 @@
 
   <div class="lightbox" id="lightbox" aria-hidden="true">
     <button class="lightbox-close" type="button" aria-label="Close">X</button>
-      <img class="lightbox-img" src="day1.jpg" alt="Day 1 sky photo">
+      <img class="lightbox-img" src="photos/2026-05/day1.jpg" alt="Day 1 sky photo">
   </div>
 
+  <script src="gallery-data.js"></script>
   <script>
     const app = {
       cropKey: "derkey-profile-crop",
       slideMs: 10000,
       fadeVolume: 10,
-      photoOfTheMonth: {
-        day: 20,
-        badge: "potm-crown-small.png"
-      },
-      days: [
-        "day1.jpg",
-        "day2.jpg",
-        "day3.jpg",
-        "day4.jpg",
-        "day5.jpg",
-        "day6.jpg",
-        "day7.jpg",
-        "day8.jpg",
-        "day9.jpg",
-        "day10.jpg",
-        "day11.jpg",
-        "day13.jpg",
-        "day14.jpg",
-        "day15.jpg",
-        "day16.jpg",
-        "day17.jpg",
-        "day19.jpg",
-        "day20.jpg",
-        "day21.jpg",
-        "day22.jpg",
-        "day23.jpg",
-        "day24.jpg",
-        "day25.jpg",
-        "day26.jpg",
-        "day27.jpg"
-      ],
+      months: window.GALLERY_DATA?.months || [],
       tracks: [
         { title: "ขอให้ฟ้าเป็นใจ", artist: "t_047", src: "music/t_047 - ขอให้ฟ้าเป็นใจ.mp3" },
         { title: "รอสายรุ้ง", artist: "t_047", src: "music/t_047 - รอสายรุ้ง.mp3" },
@@ -1285,6 +1350,12 @@
       songDuration: document.querySelector(".song-duration"),
       songTitle: document.querySelector(".song-title"),
       artistName: document.querySelector(".artist-name"),
+      monthLabel: document.querySelector(".month-label"),
+      prevMonth: document.querySelector(".prev-month"),
+      nextMonth: document.querySelector(".next-month"),
+      gallerySection: document.querySelector(".sky-day"),
+      skyFrame: document.querySelector(".sky-frame"),
+      emptyMonth: document.querySelector(".empty-month"),
       activeImage: document.querySelector(".day-image-current"),
       standbyImage: document.querySelector(".day-image-next"),
       potmBadge: document.querySelector(".potm-badge"),
@@ -1304,7 +1375,20 @@
       spotifySheet: document.querySelector(".spotify-sheet")
     };
 
+    function currentBangkokMonthId() {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        timeZone: "Asia/Bangkok"
+      }).formatToParts(new Date());
+      const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+      return `${values.year}-${values.month}`;
+    }
+
+    const currentMonthIndex = app.months.findIndex((month) => month.id === currentBangkokMonthId());
+
     const state = {
+      monthIndex: currentMonthIndex >= 0 ? currentMonthIndex : Math.max(0, app.months.length - 1),
       dayIndex: 0,
       trackIndex: 0,
       targetVolume: app.fadeVolume / 100,
@@ -1355,10 +1439,45 @@
     }
 
     /* Day gallery */
+    function currentMonth() {
+      return app.months[state.monthIndex];
+    }
+
+    function currentPhotos() {
+      return currentMonth()?.photos || [];
+    }
+
+    function updateMonthControls() {
+      const month = currentMonth();
+      if (!month) return;
+      el.monthLabel.textContent = month.label;
+      el.gallerySection.setAttribute("aria-label", `${month.label} sky gallery`);
+      el.prevMonth.disabled = state.monthIndex === 0;
+      el.nextMonth.disabled = state.monthIndex === app.months.length - 1;
+    }
+
+    function updateEmptyState() {
+      const isEmpty = currentPhotos().length === 0;
+      el.skyFrame.classList.toggle("is-empty", isEmpty);
+      el.skyFrame.tabIndex = isEmpty ? -1 : 0;
+      el.prevDay.disabled = isEmpty;
+      el.nextDay.disabled = isEmpty;
+      el.slideshowToggle.disabled = isEmpty;
+      el.emptyMonth.textContent = `${currentMonth()?.label || "This month"} has no photos yet`;
+      if (isEmpty) {
+        stopSlideshow();
+        el.dayCount.textContent = "Day 0 / 0";
+        el.potmBadge.classList.remove("is-active");
+        el.potmBadge.setAttribute("aria-hidden", "true");
+      }
+    }
+
     function updateDayText() {
-      const displayDay = state.dayIndex + 1;
-      const isPhotoOfTheMonth = displayDay === app.photoOfTheMonth.day;
-      el.dayCount.textContent = `Day ${displayDay} / ${app.days.length}`;
+      const month = currentMonth();
+      const photos = currentPhotos();
+      const displayDay = photos[state.dayIndex]?.day || 1;
+      const isPhotoOfTheMonth = displayDay === month?.photoOfTheMonthDay;
+      el.dayCount.textContent = `Day ${displayDay} / ${photos.length}`;
       el.potmBadge.classList.toggle("is-active", isPhotoOfTheMonth);
       el.potmBadge.setAttribute("aria-hidden", String(!isPhotoOfTheMonth));
     }
@@ -1391,16 +1510,20 @@
     async function setDay(index, direction = 0) {
       if (state.isSliding) return;
 
-      const nextIndex = (index + app.days.length) % app.days.length;
+      const photos = currentPhotos();
+      if (!photos.length) return;
+      const nextIndex = (index + photos.length) % photos.length;
       if (nextIndex === state.dayIndex && direction !== 0) return;
 
-      const src = app.days[nextIndex];
-      const displayDay = nextIndex + 1;
+      const { src, day: displayDay } = photos[nextIndex];
+      const alt = `${currentMonth().label}, day ${displayDay} sky photo`;
 
       if (direction === 0) {
         state.dayIndex = nextIndex;
         el.activeImage.src = src;
-        el.activeImage.alt = `Day ${displayDay} sky photo`;
+        el.activeImage.alt = alt;
+        el.standbyImage.src = src;
+        el.standbyImage.alt = alt;
         setBackdrop(src, true);
         updateDayText();
         return;
@@ -1410,13 +1533,13 @@
       await preloadImage(src);
       state.dayIndex = nextIndex;
       setBackdrop(src);
-      prepareStandbyImage(src, displayDay, direction);
+      prepareStandbyImage(src, alt, direction);
       animateImageSwap(direction);
     }
 
-    function prepareStandbyImage(src, displayDay, direction) {
+    function prepareStandbyImage(src, alt, direction) {
       el.standbyImage.src = src;
-      el.standbyImage.alt = `Day ${displayDay} sky photo`;
+      el.standbyImage.alt = alt;
       el.standbyImage.style.transition = "none";
       el.activeImage.style.transition = "none";
       el.standbyImage.style.opacity = "1";
@@ -1474,6 +1597,25 @@
           oldActive.style.transform = `translateX(${-direction * 100}%)`;
         });
       });
+    }
+
+    async function setMonth(index) {
+      if (state.isSliding || !app.months.length) return;
+      const nextIndex = clamp(index, 0, app.months.length - 1);
+      if (nextIndex === state.monthIndex) return;
+
+      const wasRunning = Boolean(state.slideshowTimer);
+      stopSlideshow();
+      state.monthIndex = nextIndex;
+      state.dayIndex = 0;
+      updateMonthControls();
+      updateEmptyState();
+      const firstPhoto = currentPhotos()[0];
+      if (firstPhoto) {
+        await preloadImage(firstPhoto.src);
+        await setDay(0);
+        if (wasRunning) startSlideshow();
+      }
     }
 
     /* Slideshow */
@@ -1630,6 +1772,7 @@
 
     /* Lightbox */
     function openLightbox() {
+      if (!currentPhotos().length) return;
       el.lightboxImage.src = el.activeImage.src;
       el.lightboxImage.alt = el.activeImage.alt;
       el.lightbox.classList.add("open");
@@ -1691,6 +1834,8 @@
 
     el.musicAudio.addEventListener("loadedmetadata", updateSongProgress);
     el.musicAudio.addEventListener("timeupdate", updateSongProgress);
+    el.prevMonth.addEventListener("click", () => setMonth(state.monthIndex - 1));
+    el.nextMonth.addEventListener("click", () => setMonth(state.monthIndex + 1));
 
     el.prevDay.addEventListener("click", () => {
       stopSlideshow();
@@ -1735,8 +1880,10 @@
 
     /* Init */
     applyCrop();
+    updateMonthControls();
+    updateEmptyState();
     setDay(0);
-    setTrack(0);
+    setTrack(Math.floor(Math.random() * app.tracks.length));
     setVolume(app.fadeVolume);
   </script>
 </body>
