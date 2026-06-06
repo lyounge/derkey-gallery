@@ -1356,6 +1356,7 @@
       gallerySection: document.querySelector(".sky-day"),
       skyFrame: document.querySelector(".sky-frame"),
       emptyMonth: document.querySelector(".empty-month"),
+      dayControls: document.querySelector(".day-controls"),
       activeImage: document.querySelector(".day-image-current"),
       standbyImage: document.querySelector(".day-image-next"),
       potmBadge: document.querySelector(".potm-badge"),
@@ -1393,6 +1394,7 @@
       trackIndex: 0,
       targetVolume: app.fadeVolume / 100,
       isSliding: false,
+      isChangingMonth: false,
       fadeTimer: null,
       slideshowTimer: null,
       progressFrame: null,
@@ -1599,23 +1601,92 @@
       });
     }
 
+    function animateMonthTransition(phase, direction) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return Promise.resolve();
+      }
+
+      const isEntering = phase === "enter";
+      const frameOffset = direction * 28;
+      const labelOffset = direction * 16;
+      const timing = {
+        duration: isEntering ? 360 : 220,
+        easing: isEntering ? "cubic-bezier(0.16, 1, 0.3, 1)" : "cubic-bezier(0.4, 0, 1, 1)",
+        fill: "both"
+      };
+      const animations = [
+        el.skyFrame.animate(
+          isEntering
+            ? [
+                { opacity: 0, transform: `translateX(${frameOffset}px) scale(0.985)`, filter: "blur(4px)" },
+                { opacity: 1, transform: "translateX(0) scale(1)", filter: "blur(0)" }
+              ]
+            : [
+                { opacity: 1, transform: "translateX(0) scale(1)", filter: "blur(0)" },
+                { opacity: 0, transform: `translateX(${-frameOffset}px) scale(0.99)`, filter: "blur(3px)" }
+              ],
+          timing
+        ),
+        el.monthLabel.animate(
+          isEntering
+            ? [
+                { opacity: 0, transform: `translateX(${labelOffset}px)` },
+                { opacity: 1, transform: "translateX(0)" }
+              ]
+            : [
+                { opacity: 1, transform: "translateX(0)" },
+                { opacity: 0, transform: `translateX(${-labelOffset}px)` }
+              ],
+          timing
+        ),
+        el.dayControls.animate(
+          isEntering
+            ? [
+                { opacity: 0.35, transform: `translateX(${direction * 10}px)` },
+                { opacity: 1, transform: "translateX(0)" }
+              ]
+            : [
+                { opacity: 1, transform: "translateX(0)" },
+                { opacity: 0.35, transform: `translateX(${direction * -10}px)` }
+              ],
+          timing
+        )
+      ];
+
+      return Promise.all(animations.map((animation) => animation.finished.catch(() => {})))
+        .then(() => animations.forEach((animation) => animation.cancel()));
+    }
+
     async function setMonth(index) {
-      if (state.isSliding || !app.months.length) return;
+      if (state.isSliding || state.isChangingMonth || !app.months.length) return;
       const nextIndex = clamp(index, 0, app.months.length - 1);
       if (nextIndex === state.monthIndex) return;
 
+      state.isChangingMonth = true;
+      const direction = nextIndex > state.monthIndex ? 1 : -1;
       const wasRunning = Boolean(state.slideshowTimer);
       stopSlideshow();
-      state.monthIndex = nextIndex;
-      state.dayIndex = 0;
-      updateMonthControls();
-      updateEmptyState();
-      const firstPhoto = currentPhotos()[0];
-      if (firstPhoto) {
-        await preloadImage(firstPhoto.src);
-        await setDay(0);
-        if (wasRunning) startSlideshow();
+      let firstPhoto;
+
+      try {
+        const nextMonth = app.months[nextIndex];
+        firstPhoto = nextMonth.photos[0];
+        if (firstPhoto) await preloadImage(firstPhoto.src);
+
+        await animateMonthTransition("exit", direction);
+        state.monthIndex = nextIndex;
+        state.dayIndex = 0;
+        updateMonthControls();
+        updateEmptyState();
+        if (firstPhoto) {
+          await setDay(0);
+        }
+        await animateMonthTransition("enter", direction);
+      } finally {
+        state.isChangingMonth = false;
       }
+
+      if (wasRunning && firstPhoto) startSlideshow();
     }
 
     /* Slideshow */
