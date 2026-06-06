@@ -15,6 +15,7 @@
       --line: rgba(235, 250, 255, 0.74);
       --shadow: rgba(15, 72, 112, 0.22);
       --ease-slide: cubic-bezier(0.38, 0, 0.16, 1);
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
       --hand-font: "Comic Sans MS", "Segoe Print", cursive;
       --ui-font: "Segoe UI", Tahoma, sans-serif;
     }
@@ -46,6 +47,13 @@
     button {
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    .spotify-link:focus-visible,
+    .sky-frame:focus-visible {
+      outline: 3px solid rgba(239, 252, 255, 0.96);
+      outline-offset: 4px;
     }
 
     /* App shell */
@@ -157,9 +165,8 @@
       border-radius: 50%;
       background: var(--glass);
       color: #0c649c;
-      box-shadow: 0 14px 28px rgba(24, 88, 132, 0.14);
       backdrop-filter: blur(10px);
-      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+      transition: transform 180ms var(--ease-out), background 180ms ease;
     }
 
     .round-button svg,
@@ -189,7 +196,6 @@
     .day-nav:active {
       transform: scale(1.12);
       background: rgba(226, 249, 255, 0.5);
-      box-shadow: 0 18px 34px rgba(24, 88, 132, 0.22);
     }
 
     .round-button:active::after,
@@ -332,12 +338,12 @@
       position: fixed;
       left: 0;
       right: 0;
-      bottom: max(2px, env(safe-area-inset-bottom));
+      bottom: max(8px, env(safe-area-inset-bottom));
       z-index: 2;
       margin: 0;
       color: rgba(238, 250, 255, 0.9);
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(0.58rem, 2.5vw, 0.9rem);
+      font-size: clamp(0.68rem, 2.5vw, 0.9rem);
       font-style: italic;
       font-weight: 500;
       letter-spacing: 0;
@@ -357,11 +363,11 @@
     .day-card {
       position: relative;
       width: min(100%, 430px);
-      min-height: min(810px, calc(100dvh - 42px));
+      min-height: min(760px, calc(100dvh - 24px));
       display: grid;
       grid-template-rows: auto 1fr auto auto;
       gap: 12px;
-      padding: max(18px, env(safe-area-inset-top)) 12px max(18px, env(safe-area-inset-bottom));
+      padding: max(24px, env(safe-area-inset-top)) 12px max(14px, env(safe-area-inset-bottom));
     }
 
     .day-top {
@@ -424,8 +430,8 @@
     .sky-photo-track {
       position: relative;
       width: 100%;
-      height: min(72dvh, 670px);
-      min-height: 520px;
+      height: min(58dvh, 620px);
+      min-height: 410px;
     }
 
     .day-image {
@@ -455,10 +461,10 @@
       object-fit: contain;
       opacity: 0;
       pointer-events: none;
-      transform: translate(10%, -12%) rotate(9deg) scale(0.72);
+      transform: translate(10%, -12%) rotate(9deg) scale(0.82);
       transform-origin: 72% 28%;
       filter: drop-shadow(0 10px 14px rgba(19, 63, 106, 0.22));
-      transition: opacity 240ms ease, transform 320ms cubic-bezier(0.34, 1.36, 0.64, 1);
+      transition: opacity 220ms ease, transform 320ms var(--ease-out);
     }
 
     .potm-badge.is-active {
@@ -510,10 +516,9 @@
       background: rgba(255, 255, 255, 0.34);
       color: #0c649c;
       font-weight: 800;
-      box-shadow: 0 14px 28px rgba(24, 88, 132, 0.15);
       backdrop-filter: blur(10px);
       overflow: hidden;
-      transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+      transition: transform 180ms var(--ease-out), background 180ms ease;
     }
 
     .slideshow-toggle::after {
@@ -532,7 +537,6 @@
     .slideshow-toggle:active {
       transform: scale(0.92);
       background: rgba(226, 249, 255, 0.62);
-      box-shadow: 0 9px 18px rgba(24, 88, 132, 0.18);
     }
 
     .slideshow-toggle:active::after {
@@ -575,10 +579,12 @@
 
     .slideshow-progress span {
       display: block;
-      width: 0%;
+      width: 100%;
       height: 100%;
       border-radius: inherit;
       background: linear-gradient(90deg, var(--cyan), var(--blue));
+      transform: scaleX(0);
+      transform-origin: left center;
     }
 
     .spotify-link {
@@ -587,7 +593,7 @@
       aspect-ratio: 1;
       display: grid;
       place-items: center;
-      margin-top: clamp(34px, 6vh, 72px);
+      margin-top: clamp(16px, 3vh, 30px);
       border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 22px;
       background: rgba(18, 15, 15, 0.8);
@@ -597,7 +603,7 @@
       color: #1ed760;
       text-decoration: none;
       backdrop-filter: blur(12px);
-      transition: transform 180ms ease, box-shadow 220ms ease, background 180ms ease;
+      transition: transform 180ms var(--ease-out), box-shadow 220ms ease, background 180ms ease;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -637,7 +643,7 @@
       opacity: 0;
       pointer-events: none;
       transform: translateY(calc(100% + 18px)) scale(0.96);
-      transition: opacity 260ms ease, transform 360ms cubic-bezier(0.34, 1.28, 0.64, 1);
+      transition: opacity 260ms ease, transform 360ms var(--ease-out);
     }
 
     body.spotify-open .spotify-sheet {
@@ -661,20 +667,24 @@
       left: 12px;
       right: 12px;
       z-index: 30;
+      height: 178px;
       overflow: hidden;
-      max-height: 0;
       opacity: 0;
+      visibility: hidden;
       pointer-events: none;
       transform: translateY(-8px);
-      transition: max-height 420ms ease, opacity 300ms ease, transform 420ms ease;
+      transition:
+        opacity 260ms ease,
+        transform 360ms var(--ease-out),
+        visibility 0s linear 360ms;
     }
 
     body.music-open .music-panel {
-      min-height: 154px;
-      max-height: 178px;
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
       transform: translateY(0);
+      transition-delay: 0s;
     }
 
     .music-frame {
@@ -801,11 +811,13 @@
     .track-bar span,
     .volume-fill {
       display: block;
-      width: 0%;
+      width: 100%;
       height: 100%;
       border-radius: inherit;
       background: #ffffff;
-      transition: width 120ms linear;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 120ms linear;
     }
 
     .volume-control {
@@ -989,6 +1001,20 @@
       }
     }
 
+    @media (min-width: 900px) and (min-height: 760px) {
+      .day-card {
+        width: min(100%, 520px);
+      }
+
+      .sky-frame {
+        width: min(38vw, 410px);
+      }
+
+      .sky-photo-track {
+        height: min(62dvh, 620px);
+      }
+    }
+
     @media (max-height: 680px) {
       .profile {
         gap: 14px;
@@ -1004,12 +1030,23 @@
       }
 
       .sky-photo-track {
-        height: 66dvh;
-        min-height: 410px;
+        height: 54dvh;
+        min-height: 360px;
       }
 
       .music-frame {
         padding: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
       }
     }
   </style>
@@ -1119,7 +1156,7 @@
           </div>
         </div>
 
-        <figure class="sky-frame">
+        <figure class="sky-frame" tabindex="0" aria-label="Open current photo">
           <div class="sky-photo-track">
             <img class="day-image day-image-current" src="day1.jpg" alt="Day 1 sky photo">
             <img class="day-image day-image-next" src="day1.jpg" alt="">
@@ -1184,7 +1221,7 @@
 
   <div class="lightbox" id="lightbox" aria-hidden="true">
     <button class="lightbox-close" type="button" aria-label="Close">X</button>
-    <img class="lightbox-img" src="" alt="">
+      <img class="lightbox-img" src="day1.jpg" alt="Day 1 sky photo">
   </div>
 
   <script>
@@ -1447,7 +1484,7 @@
       const tick = () => {
         const elapsed = performance.now() - state.progressStartedAt;
         const percent = Math.min((elapsed / app.slideMs) * 100, 100);
-        el.progress.style.width = `${percent}%`;
+        el.progress.style.transform = `scaleX(${percent / 100})`;
         if (percent < 100) state.progressFrame = requestAnimationFrame(tick);
       };
 
@@ -1456,7 +1493,7 @@
 
     function stopProgress() {
       cancelAnimationFrame(state.progressFrame);
-      el.progress.style.width = "0%";
+      el.progress.style.transform = "scaleX(0)";
     }
 
     function startSlideshow(resumeMs = 0) {
@@ -1490,7 +1527,7 @@
       el.musicAudio.load();
       el.songTitle.textContent = track.title;
       el.artistName.textContent = track.artist;
-      el.trackFill.style.width = "0%";
+      el.trackFill.style.transform = "scaleX(0)";
       el.songCurrentTime.textContent = "0:00";
       el.songTitle.animate(
         [
@@ -1506,7 +1543,7 @@
       el.musicAudio.volume = state.targetVolume;
       el.volume.value = Math.round(state.targetVolume * 100);
       el.volumeValue.textContent = `${Math.round(state.targetVolume * 100)}%`;
-      el.volumeFill.style.width = `${Math.round(state.targetVolume * 100)}%`;
+      el.volumeFill.style.transform = `scaleX(${state.targetVolume})`;
       el.volumeFill.animate(
         [
           { filter: "brightness(1.45)" },
@@ -1586,7 +1623,7 @@
       const duration = el.musicAudio.duration || 0;
       const current = el.musicAudio.currentTime || 0;
       const percent = duration ? (current / duration) * 100 : 0;
-      el.trackFill.style.width = `${percent}%`;
+      el.trackFill.style.transform = `scaleX(${percent / 100})`;
       el.songCurrentTime.textContent = formatTime(current);
       el.songDuration.textContent = formatTime(duration);
     }
@@ -1674,6 +1711,11 @@
     });
 
     document.querySelector(".sky-frame").addEventListener("click", openLightbox);
+    document.querySelector(".sky-frame").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openLightbox();
+    });
     el.lightboxClose.addEventListener("click", closeLightbox);
     el.lightbox.addEventListener("click", (event) => {
       if (event.target === el.lightbox) closeLightbox();
