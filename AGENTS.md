@@ -17,6 +17,7 @@ Read `PRODUCT.md` before making visual or interaction changes.
 - `gallery-data.js`: Generated gallery manifest. Do not edit it manually.
 - `scripts/generate-gallery-data.mjs`: Generates `gallery-data.js`.
 - `.github/workflows/update-gallery.yml`: Daily 09:00 Asia/Bangkok automation.
+- `SECURITY.md`: Security expectations and repository hardening notes.
 - `backups/`: Local backups ignored by Git.
 
 ## Working Rules
@@ -31,6 +32,8 @@ Read `PRODUCT.md` before making visual or interaction changes.
    `prefers-reduced-motion` behavior.
 7. Keep photographs as the main visual focus. Avoid busy, corporate, dark, or
    heavily decorative designs.
+8. Do not add API keys, tokens, passwords, private certificates, or `.env`
+   files to this repository.
 
 ## Monthly Photos
 
@@ -65,4 +68,3 @@ Before publishing:
 - Use a concise commit message describing the change.
 - Push only after verification passes.
 - Confirm the GitHub Pages deployment succeeds.
-
