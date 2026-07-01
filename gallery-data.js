@@ -113,6 +113,12 @@ window.GALLERY_DATA = {
       "label": "June 2026",
       "photoOfTheMonthDay": null,
       "photos": []
+    },
+    {
+      "id": "2026-07",
+      "label": "July 2026",
+      "photoOfTheMonthDay": null,
+      "photos": []
     }
   ]
 };
