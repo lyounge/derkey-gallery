@@ -112,7 +112,24 @@ window.GALLERY_DATA = {
       "id": "2026-06",
       "label": "June 2026",
       "photoOfTheMonthDay": null,
-      "photos": []
+      "photos": [
+        {
+          "day": 1,
+          "src": "photos/2026-06/day1.png"
+        },
+        {
+          "day": 2,
+          "src": "photos/2026-06/day2.png"
+        },
+        {
+          "day": 3,
+          "src": "photos/2026-06/day3.png"
+        },
+        {
+          "day": 4,
+          "src": "photos/2026-06/day4.png"
+        }
+      ]
     },
     {
       "id": "2026-07",
