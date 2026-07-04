@@ -220,9 +220,29 @@
       top: max(16px, env(safe-area-inset-top));
       right: max(16px, env(safe-area-inset-right));
       z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: none;
+      filter: drop-shadow(0 1px 1px rgba(238, 250, 255, 0.5));
+    }
+
+    .visitor-eye {
+      width: 22px;
+      height: 16px;
+      flex: 0 0 auto;
+      background: var(--blue-dark);
+      -webkit-mask: url("eye.png") center / 54px 54px no-repeat;
+      mask: url("eye.png") center / 54px 54px no-repeat;
+      opacity: 0.82;
+    }
+
+    .visitor-count {
+      min-width: 17px;
       height: 20px;
       display: block;
-      filter: drop-shadow(0 2px 4px rgba(15, 72, 112, 0.24));
+      filter: brightness(0) saturate(100%) invert(30%) sepia(43%) saturate(1578%) hue-rotate(165deg) brightness(89%) contrast(95%);
+      opacity: 0.86;
     }
 
     .profile {
@@ -1148,13 +1168,15 @@
 <body>
   <main class="page" aria-label="Derkey profile">
     <section class="cover" aria-label="Profile cover">
-      <img
-        class="visitor-counter"
-        src="https://hits.sh/lyounge.github.io/derkey-gallery.svg?view=total&amp;style=flat-square&amp;label=visits&amp;color=8fe9ff&amp;labelColor=1b6e9b"
-        alt="จำนวนการเข้าชมเว็บไซต์"
-        width="56"
-        height="20"
-      >
+      <div class="visitor-counter" role="img" aria-label="จำนวนการเข้าชมเว็บไซต์">
+        <span class="visitor-eye" aria-hidden="true"></span>
+        <img
+          class="visitor-count"
+          src="https://hits.sh/lyounge.github.io/derkey-gallery.svg?view=total&amp;style=flat-square&amp;label=%20&amp;color=transparent"
+          alt=""
+          height="20"
+        >
+      </div>
 
       <div class="profile">
         <div class="photo-wrap" aria-label="Profile photo area">
