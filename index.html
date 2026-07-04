@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'none'; connect-src 'none'; img-src 'self' data:; media-src 'self'; frame-src https://open.spotify.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; form-action 'none'; connect-src 'none'; img-src 'self' data: https://hits.sh; media-src 'self'; frame-src https://open.spotify.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; upgrade-insecure-requests">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>☁Derkey☁</title>
 
@@ -215,6 +215,16 @@
     }
 
     /* Cover profile */
+    .visitor-counter {
+      position: fixed;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      z-index: 3;
+      height: 20px;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(15, 72, 112, 0.24));
+    }
+
     .profile {
       width: min(100%, 430px);
       min-height: min(760px, calc(100dvh - 58px));
@@ -1138,6 +1148,14 @@
 <body>
   <main class="page" aria-label="Derkey profile">
     <section class="cover" aria-label="Profile cover">
+      <img
+        class="visitor-counter"
+        src="https://hits.sh/lyounge.github.io/derkey-gallery.svg?view=total&amp;style=flat-square&amp;label=visits&amp;color=8fe9ff&amp;labelColor=1b6e9b"
+        alt="จำนวนการเข้าชมเว็บไซต์"
+        width="56"
+        height="20"
+      >
+
       <div class="profile">
         <div class="photo-wrap" aria-label="Profile photo area">
           <div class="photo-ring"></div>
